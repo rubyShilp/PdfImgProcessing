@@ -1,11 +1,14 @@
-var pdf2png = require("./lib/pdf2png.js");
-var images = require("images");
-var fs = require("fs");
+const pdf2png = require("./lib/pdf2png.js");
+const request = require('request');
+const images = require("images");
+const fs = require("fs");
 const history = require('connect-history-api-fallback');
 const bodyParser = require('body-parser');
 const multer  = require('multer');
 const express=require('express');
 const app=express();
+var AipOcrClient = require("baidu-aip-sdk").ocr;
+var Baiclient = new AipOcrClient('16446178','lBzTz0eRuVbLkDyrIg3r0HP4','hanhf5oW4iZiYv4LtawMbTSkEOUCqHTH');
 const Client = require('aliyun-api-gateway').Client;
 const client = new Client(203711718,'dycajgu7raonuqw6u7ypqb97ve48tkfq');
 // const Client = require('aliyun-api-gateway').SimpleClient;
@@ -105,3 +108,20 @@ function filePdfImg(params){
 // 		console.log('该图片无法识别');
 // 	});
 // })
+
+//身份证号识别
+function getImgIdcad(){
+	var image = fs.readFileSync("./file/0.jpg").toString("base64");
+	/** 
+	 * front 正面
+	 * back  背面
+	*/
+	let id_card_side='front';
+	Baiclient.idcard(image,id_card_side).then(function(result){
+		console.log(JSON.stringify(result));
+	}).catch(function(err) {
+		// 如果发生网络错误
+		console.log(err);
+	});
+}
+getImgIdcad();
